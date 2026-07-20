@@ -1,0 +1,13 @@
+Loaded: customers=99441, order_items=112650, orders=99441, payments=103886, products=32951, reviews=99224, sellers=3095
+FIX: customer_zip_code_prefix and seller_zip_code_prefix cast to text, zero-padded to 5 digits (23,995 customer rows affected)
+FIX: 623 products with missing product_category_english set to 'uncategorized'
+FLAG (not deleted): 9 payment rows with payment_value <= 0 flagged in new column is_valid_payment=False
+FLAG (not deleted): 8 orders marked delivered but missing order_delivered_customer_date, flagged in new column status_date_inconsistent=True
+FLAG (not deleted): 349 orders fall in partial/incomplete extract months (2016-09/10/12, 2018-09/10), flagged in new column is_complete_month=False
+NEW FILE: order_review_summary.csv created — 99224 raw review rows deduplicated to 98673 order-level rows (avg_review_score, review_count)
+NEW FILE: order_payment_summary.csv created — 103886 raw payment rows (installment lines) aggregated to 99437 order-level rows (total_paid, installments_used, primary_payment_type)
+FLAG (not deleted): 775 orders have zero order_items rows (mostly canceled/unavailable status), flagged in new column has_order_items=False
+NEW COLUMN: order_items.line_total = price + freight_value (total charged per line item)
+VALIDATION: post-clean orphan checks — order_items->orders: 0, order_items->products: 0, order_items->sellers: 0 (all should be 0)
+
+Saved 9 files to /home/claude/cleaned/: 7 cleaned originals + 2 new order-level summary tables
